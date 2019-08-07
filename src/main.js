@@ -32,6 +32,7 @@ const cardDatesButtonMap = {
   'repeat': [`repeat`, `repeat`],
 };
 
+
 const getControlRadioComponent = (array, isChecked = false) => (
   `<input
       type="radio"
@@ -65,10 +66,8 @@ const getSearchComponent = () => (
   </section>`
 );
 
-
-const getFilterRadioComponent = (array, isChecked = false, isDisabled = false) => {
-  return `
-    <input
+const getFilterRadioComponent = (array, isChecked = false, isDisabled = false) => (
+  `<input
       type="radio"
       id="${array[0]}"
       class="filter__input visually-hidden"
@@ -78,56 +77,45 @@ const getFilterRadioComponent = (array, isChecked = false, isDisabled = false) =
     />
     <label for="${array[0]}" class="filter__label">
       ${array[1]} <span class="${array[0]}-count">${array[2]}</span>
-    </label>
-  `;
-};
+    </label>`
+);
 
-const getFilterComponent = () => {
-  return `
-    <section class="main__filter filter container">
-      ${getFilterRadioComponent(filterMap.all, true, false)}
-      ${getFilterRadioComponent(filterMap.overdue, false, true)}
-      ${getFilterRadioComponent(filterMap.today, false, true)}
-      ${getFilterRadioComponent(filterMap.favorites)}
-      ${getFilterRadioComponent(filterMap.repeating)}
-      ${getFilterRadioComponent(filterMap.tags)}
-      ${getFilterRadioComponent(filterMap.archive)}
-    </section>
-  `;
-};
+const getFilterComponent = () => (
+  `<section class="main__filter filter container">
+    ${getFilterRadioComponent(filterMap.all, true, false)}
+    ${getFilterRadioComponent(filterMap.overdue, false, true)}
+    ${getFilterRadioComponent(filterMap.today, false, true)}
+    ${getFilterRadioComponent(filterMap.favorites)}
+    ${getFilterRadioComponent(filterMap.repeating)}
+    ${getFilterRadioComponent(filterMap.tags)}
+    ${getFilterRadioComponent(filterMap.archive)}
+  </section>`
+);
 
-const getCardControlButtonComponent = (array) => {
-  return `
-    <button type="button" class="card__btn card__btn--${array[0]} ${array[1]}">
-      ${array[0]}
-    </button>
-  `;
-};
+const getCardControlButtonComponent = (array) => (
+  `<button type="button" class="card__btn card__btn--${array[0]} ${array[1]}">
+    ${array[0]}
+  </button>`
+);
 
-const getCardColorBarComponent = () => {
-  return `
-    <div class="card__color-bar">
-      <svg class="card__color-bar-wave" width="100%" height="10">
-        <use xlink:href="#wave"></use>
-      </svg>
-    </div>
-  `;
-};
+const getCardColorBarComponent = () => (
+  `<div class="card__color-bar">
+    <svg class="card__color-bar-wave" width="100%" height="10">
+      <use xlink:href="#wave"></use>
+    </svg>
+  </div>`
+);
 
-
-const getCardHashtagNameComponent = (text) => {
-  return `
-    <span class="card__hashtag-inner">
-      <span class="card__hashtag-name">
-        #${text}
-      </span>
+const getCardHashtagNameComponent = (text) => (
+  `<span class="card__hashtag-inner">
+    <span class="card__hashtag-name">
+      #${text}
     </span>
-  `;
-};
+  </span>`
+);
 
-const getCardComponent = () => {
-  return `
-    <article class="card card--black">
+const getCardComponent = () => (
+  `<article class="card card--black">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
@@ -160,160 +148,137 @@ const getCardComponent = () => {
           </div>
         </div>
       </div>
-    </article>
-  `;
-};
+    </article>`
+);
 
-const getEditCardDatesButtonComponent = (array) => {
-  return `
-    <button class="card__${array[0]}-toggle" type="button">
-      ${array[1]}: <span class="card__${array[1]}-status">no</span>
-    </button>
-  `;
-};
+const getEditCardDatesButtonComponent = (array) => (
+  `<button class="card__${array[0]}-toggle" type="button">
+    ${array[1]}: <span class="card__${array[1]}-status">no</span>
+  </button>`
+);
 
-const getEditCardRepeateInputComponent = (day, isChecked = false) => {
-  return `
-    <input
-      class="visually-hidden card__repeat-day-input"
-      type="checkbox"
-      id="repeat-${day}-1"
-      name="repeat"
-      value="${day}"
-      ${isChecked ? ` checked` : ``}
-    />
-    <label class="card__repeat-day" for="repeat-${day}-1">
-      ${day}
-    </label>
-  `;
-};
+const getEditCardRepeateInputComponent = (day, isChecked = false) => (
+  `<input
+    class="visually-hidden card__repeat-day-input"
+    type="checkbox"
+    id="repeat-${day}-1"
+    name="repeat"
+    value="${day}"
+    ${isChecked ? ` checked` : ``}
+  />
+  <label class="card__repeat-day" for="repeat-${day}-1">
+    ${day}
+  </label>`
+);
 
-const getEditCardColorInputComponent = (color, isChecked = false) => {
-  return `
-    <input
-      type="radio"
-      id="color-${color}-1"
-      class="card__color-input card__color-input--${color} visually-hidden"
-      name="color"
-      value="${color}"
-      ${isChecked ? ` checked` : ``}
-    />
-    <label
-      for="color-${color}-1"
-      class="card__color card__color--${color}"
-      >${color}
-    </label>
-  `;
-};
+const getEditCardColorInputComponent = (color, isChecked = false) => (
+  `<input
+    type="radio"
+    id="color-${color}-1"
+    class="card__color-input card__color-input--${color} visually-hidden"
+    name="color"
+    value="${color}"
+    ${isChecked ? ` checked` : ``}
+  />
+  <label
+    for="color-${color}-1"
+    class="card__color card__color--${color}"
+    >${color}
+  </label>`
+);
 
-const getStatusButtonComponent = (type, text) => {
-  return `
-    <button class="card__${text}" type="${type}">${text}</button>
-  `;
-};
+const getStatusButtonComponent = (type, text) => `<button class="card__${text}" type="${type}">${text}</button>`;
 
-const getEditCardComponent = () => {
-  return `
-    <article class="card card--edit card--black">
-      <form class="card__form" method="get">
-        <div class="card__inner">
-          <div class="card__control">
-            ${getCardControlButtonComponent(cardControlButtonMap.archive)}
-            ${getCardControlButtonComponent(cardControlButtonMap.favorites)}
-          </div>
-          ${getCardColorBarComponent()}
-          <div class="card__textarea-wrap">
-            <label>
-              <textarea
-                class="card__text"
-                placeholder="Start typing your text here..."
-                name="text"
-              >This is example of new task, you can add picture, set date and time, add tags.</textarea>
-            </label>
-          </div>
-          <div class="card__settings">
-            <div class="card__details">
-              <div class="card__dates">
-                ${getEditCardDatesButtonComponent(cardDatesButtonMap.date)}
-                <fieldset class="card__date-deadline" disabled>
-                  <label class="card__input-deadline-wrap">
-                    <input
-                      class="card__date"
-                      type="text"
-                      placeholder="23 September"
-                      name="date"
-                    />
-                  </label>
-                </fieldset>
-                ${getEditCardDatesButtonComponent(cardDatesButtonMap.repeat)}
-                <fieldset class="card__repeat-days" disabled>
-                  <div class="card__repeat-days-inner">
-                    ${getEditCardRepeateInputComponent(`mo`)}
-                    ${getEditCardRepeateInputComponent(`tu`, true)}
-                    ${getEditCardRepeateInputComponent(`we`)}
-                    ${getEditCardRepeateInputComponent(`th`)}
-                    ${getEditCardRepeateInputComponent(`fr`, true)}
-                    ${getEditCardRepeateInputComponent(`sa`)}
-                    ${getEditCardRepeateInputComponent(`su`, true)}
-                  </div>
-                </fieldset>
-              </div>
-              <div class="card__hashtag">
-                <div class="card__hashtag-list"></div>
-                <label>
+const getEditCardComponent = () => (
+  `<article class="card card--edit card--black">
+    <form class="card__form" method="get">
+      <div class="card__inner">
+        <div class="card__control">
+          ${getCardControlButtonComponent(cardControlButtonMap.archive)}
+          ${getCardControlButtonComponent(cardControlButtonMap.favorites)}
+        </div>
+        ${getCardColorBarComponent()}
+        <div class="card__textarea-wrap">
+          <label>
+            <textarea
+              class="card__text"
+              placeholder="Start typing your text here..."
+              name="text"
+            >This is example of new task, you can add picture, set date and time, add tags.</textarea>
+          </label>
+        </div>
+        <div class="card__settings">
+          <div class="card__details">
+            <div class="card__dates">
+              ${getEditCardDatesButtonComponent(cardDatesButtonMap.date)}
+              <fieldset class="card__date-deadline" disabled>
+                <label class="card__input-deadline-wrap">
                   <input
+                    class="card__date"
                     type="text"
-                    class="card__hashtag-input"
-                    name="hashtag-input"
-                    placeholder="Type new hashtag here"
+                    placeholder="23 September"
+                    name="date"
                   />
                 </label>
-              </div>
+              </fieldset>
+              ${getEditCardDatesButtonComponent(cardDatesButtonMap.repeat)}
+              <fieldset class="card__repeat-days" disabled>
+                <div class="card__repeat-days-inner">
+                  ${getEditCardRepeateInputComponent(`mo`)}
+                  ${getEditCardRepeateInputComponent(`tu`, true)}
+                  ${getEditCardRepeateInputComponent(`we`)}
+                  ${getEditCardRepeateInputComponent(`th`)}
+                  ${getEditCardRepeateInputComponent(`fr`, true)}
+                  ${getEditCardRepeateInputComponent(`sa`)}
+                  ${getEditCardRepeateInputComponent(`su`, true)}
+                </div>
+              </fieldset>
             </div>
-            <div class="card__colors-inner">
-              <h3 class="card__colors-title">Color</h3>
-              <div class="card__colors-wrap">
-                ${getEditCardColorInputComponent(`black`, true)}
-                ${getEditCardColorInputComponent(`yellow`)}
-                ${getEditCardColorInputComponent(`blue`)}
-                ${getEditCardColorInputComponent(`green`)}
-                ${getEditCardColorInputComponent(`pink`)}
-              </div>
+            <div class="card__hashtag">
+              <div class="card__hashtag-list"></div>
+              <label>
+                <input
+                  type="text"
+                  class="card__hashtag-input"
+                  name="hashtag-input"
+                  placeholder="Type new hashtag here"
+                />
+              </label>
             </div>
           </div>
-          <div class="card__status-btns">
-            ${getStatusButtonComponent(`submit`, `save`)}
-            ${getStatusButtonComponent(`button`, `delete`)}
+          <div class="card__colors-inner">
+            <h3 class="card__colors-title">Color</h3>
+            <div class="card__colors-wrap">
+              ${getEditCardColorInputComponent(`black`, true)}
+              ${getEditCardColorInputComponent(`yellow`)}
+              ${getEditCardColorInputComponent(`blue`)}
+              ${getEditCardColorInputComponent(`green`)}
+              ${getEditCardColorInputComponent(`pink`)}
+            </div>
           </div>
         </div>
-      </form>
-    </article>
-  `;
-};
+        <div class="card__status-btns">
+          ${getStatusButtonComponent(`submit`, `save`)}
+          ${getStatusButtonComponent(`button`, `delete`)}
+        </div>
+      </div>
+    </form>
+  </article>`
+);
 
-const getBoardFilterComponent = (text) => {
-  return `
-    <a href="#" class="board__filter">SORT BY ${text}</a>
-  `;
-};
+const getBoardFilterComponent = (text) => `<a href="#" class="board__filter">SORT BY ${text}</a>`;
 
-const getBoardFilterListComponent = () => {
-  return `
-    <div class="board__filter-list">
-      ${getBoardFilterComponent(`DEFAULT`)}
-      ${getBoardFilterComponent(`DATE up`)}
-      ${getBoardFilterComponent(`DATE down`)}
-    </div>
-  `;
-};
+const getBoardFilterListComponent = () => (
+  `<div class="board__filter-list">
+    ${getBoardFilterComponent(`DEFAULT`)}
+    ${getBoardFilterComponent(`DATE up`)}
+    ${getBoardFilterComponent(`DATE down`)}
+  </div>`
+);
 
-const getLoadButtonComponent = () => {
-  return `
-    <button class="load-more" type="button">load more</button>
-  `;
-};
+const getLoadButtonComponent = () => `<button class="load-more" type="button">load more</button>`;
 
-const addRepeateComponent = function (cb, repeate = 1) {
+const addRepeateComponent = (cb, repeate = 1) => {
   let componentsBlock = cb();
 
   for (let i = 1; i < repeate; i++) {
@@ -334,9 +299,8 @@ const getBoardContainerComponent = () => (
   </section>`
 );
 
-const addComponentToHtml = (element, container) => {
-  container.insertAdjacentHTML(`beforeend`, element);
-};
+const addComponentToHtml = (element, container) => container.insertAdjacentHTML(`beforeend`, element);
+
 
 addComponentToHtml(getMenuComponent(), controlContainerElement);
 addComponentToHtml(getSearchComponent(), mainElement);
