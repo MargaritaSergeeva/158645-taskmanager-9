@@ -1,4 +1,3 @@
-'use strict';
 const CARD_COUNT = 3;
 
 const mainElement = document.querySelector(`.main`);
