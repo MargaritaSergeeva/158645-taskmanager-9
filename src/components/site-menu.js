@@ -4,7 +4,7 @@ const controlMap = {
   'statistic': [`control__statistic`, `STATISTICS`, ``],
 };
 
-const getControlRadioComponent = (array, isChecked = false) => (
+const getControlRadioTemplate = (array, isChecked = false) => (
   `<input
       type="radio"
       name="control"
@@ -17,10 +17,10 @@ const getControlRadioComponent = (array, isChecked = false) => (
     </label>`
 );
 
-export const getMenuComponent = () => (
+export const getMenuTemplate = () => (
   `<section class="control__btn-wrap">
-    ${getControlRadioComponent(controlMap.newTask)}
-    ${getControlRadioComponent(controlMap.task, true)}
-    ${getControlRadioComponent(controlMap.statistic)}
+    ${getControlRadioTemplate(controlMap.newTask)}
+    ${getControlRadioTemplate(controlMap.task, true)}
+    ${getControlRadioTemplate(controlMap.statistic)}
   </section>`
 );
