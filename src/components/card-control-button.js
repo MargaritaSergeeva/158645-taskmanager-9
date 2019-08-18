@@ -7,5 +7,5 @@ export const cardControlButtonMap = {
 export const getCardControlButtonTemplate = (array) => (
   `<button type="button" class="card__btn card__btn--${array[0]} ${array[1]}">
     ${array[0]}
-  </button>`
+  </button>`.trim()
 );

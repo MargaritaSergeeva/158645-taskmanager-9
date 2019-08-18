@@ -2,51 +2,10 @@ import {cardControlButtonMap} from './card-control-button.js';
 import {getCardControlButtonTemplate} from './card-control-button.js';
 import {getCardColorBarTemplate} from './card-color-bar.js';
 
-const cardDatesButtonMap = {
-  'date': [`date-deadline`, `date`],
-  'repeat': [`repeat`, `repeat`],
-};
+const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
-const getEditCardDatesButtonTemplate = (array) => (
-  `<button class="card__${array[0]}-toggle" type="button">
-    ${array[1]}: <span class="card__${array[1]}-status">no</span>
-  </button>`
-);
-
-const getEditCardRepeateInputTemplate = (day, isChecked = false) => (
-  `<input
-    class="visually-hidden card__repeat-day-input"
-    type="checkbox"
-    id="repeat-${day}-1"
-    name="repeat"
-    value="${day}"
-    ${isChecked ? ` checked` : ``}
-  />
-  <label class="card__repeat-day" for="repeat-${day}-1">
-    ${day}
-  </label>`
-);
-
-const getEditCardColorInputTemplate = (color, isChecked = false) => (
-  `<input
-    type="radio"
-    id="color-${color}-1"
-    class="card__color-input card__color-input--${color} visually-hidden"
-    name="color"
-    value="${color}"
-    ${isChecked ? ` checked` : ``}
-  />
-  <label
-    for="color-${color}-1"
-    class="card__color card__color--${color}"
-    >${color}
-  </label>`
-);
-
-const getStatusButtonTemplate = (type, text) => `<button class="card__${text}" type="${type}">${text}</button>`;
-
-export const getEditCardTemplate = () => (
-  `<article class="card card--edit card--black">
+export const getEditCardTemplate = ({description, dueDate, repeatingDays, tags, color}) => (
+  `<article class="card card--edit card--${color} ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``}">
     <form class="card__form" method="get">
       <div class="card__inner">
         <div class="card__control">
@@ -60,38 +19,61 @@ export const getEditCardTemplate = () => (
               class="card__text"
               placeholder="Start typing your text here..."
               name="text"
-            >This is example of new task, you can add picture, set date and time, add tags.</textarea>
+            >${description}</textarea>
           </label>
         </div>
         <div class="card__settings">
           <div class="card__details">
             <div class="card__dates">
-              ${getEditCardDatesButtonTemplate(cardDatesButtonMap.date)}
-              <fieldset class="card__date-deadline" disabled>
+              <button class="card__date-deadline-toggle" type="button">
+                date: <span class="card__date-status">
+                ${dueDate ? ` yes` : `no`}</span>
+              </button>
+              <fieldset class="card__date-deadline"
+                ${dueDate ? `` : `disabled`}>
                 <label class="card__input-deadline-wrap">
                   <input
                     class="card__date"
                     type="text"
                     placeholder="23 September"
                     name="date"
+                    value="${dueDate ? `${new Date(dueDate).toDateString()}` : ``}"
                   />
                 </label>
               </fieldset>
-              ${getEditCardDatesButtonTemplate(cardDatesButtonMap.repeat)}
-              <fieldset class="card__repeat-days" disabled>
+              <button class="card__repeat-toggle" type="button">
+                repeat:<span class="card__repeat-status">
+                ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? ` yes` : `no`}</span>
+              </button>
+              <fieldset class="card__repeat-days"
+                ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `` : `disabled`}>
                 <div class="card__repeat-days-inner">
-                  ${getEditCardRepeateInputTemplate(`mo`)}
-                  ${getEditCardRepeateInputTemplate(`tu`, true)}
-                  ${getEditCardRepeateInputTemplate(`we`)}
-                  ${getEditCardRepeateInputTemplate(`th`)}
-                  ${getEditCardRepeateInputTemplate(`fr`, true)}
-                  ${getEditCardRepeateInputTemplate(`sa`)}
-                  ${getEditCardRepeateInputTemplate(`su`, true)}
+                  ${Object.keys(repeatingDays).map((day) => (`<input
+                    class="visually-hidden card__repeat-day-input"
+                    type="checkbox"
+                    id="repeat-${day}-1"
+                    name="repeat"
+                    value="${day}"
+                    ${repeatingDays[day] ? ` checked` : ``}
+                  />
+                  <label class="card__repeat-day" for="repeat-${day}-1">
+                    ${day}
+                  </label>`)
+                  .trim())
+                  .join(``)}
                 </div>
               </fieldset>
             </div>
             <div class="card__hashtag">
-              <div class="card__hashtag-list"></div>
+              <div class="card__hashtag-list">
+                ${Array.from(tags).map((tag) => (`<span class="card__hashtag-inner">
+                    <input type="hidden" name="hashtag" value="repeat" class="card__hashtag-hidden-input">
+                    <p class="card__hashtag-name">#${tag}</p>
+                    <button type="button" class="card__hashtag-delete">delete</button>
+                  </span>`)
+                .trim())
+                .join(``)}
+              </div>
               <label>
                 <input
                   type="text"
@@ -105,19 +87,27 @@ export const getEditCardTemplate = () => (
           <div class="card__colors-inner">
             <h3 class="card__colors-title">Color</h3>
             <div class="card__colors-wrap">
-              ${getEditCardColorInputTemplate(`black`, true)}
-              ${getEditCardColorInputTemplate(`yellow`)}
-              ${getEditCardColorInputTemplate(`blue`)}
-              ${getEditCardColorInputTemplate(`green`)}
-              ${getEditCardColorInputTemplate(`pink`)}
+              ${COLORS.map((it) => `<input
+                type="radio"
+                id="color-${it}-1"
+                class="card__color-input card__color-input--${it} visually-hidden"
+                name="color"
+                value="${it}"
+                ${it === color ? `checked` : ``}
+              />
+              <label
+                for="color-${it}-1"
+                class="card__color card__color--${it}">${it}</label>`
+              .trim())
+              .join(``)}
             </div>
           </div>
         </div>
         <div class="card__status-btns">
-          ${getStatusButtonTemplate(`submit`, `save`)}
-          ${getStatusButtonTemplate(`button`, `delete`)}
+          <button class="card__save" type="submit">save</button>
+          <button class="card__delete" type="button">delete</button>
         </div>
       </div>
     </form>
-  </article>`
+  </article>`.trim()
 );

@@ -14,7 +14,7 @@ const getControlRadioTemplate = (array, isChecked = false) => (
     />
     <label for="${array[0]}" class="control__label ${array[2]}">
       ${array[1]}
-    </label>`
+    </label>`.trim()
 );
 
 export const getMenuTemplate = () => (
@@ -22,5 +22,5 @@ export const getMenuTemplate = () => (
     ${getControlRadioTemplate(controlMap.newTask)}
     ${getControlRadioTemplate(controlMap.task, true)}
     ${getControlRadioTemplate(controlMap.statistic)}
-  </section>`
+  </section>`.trim()
 );
