@@ -1,19 +1,33 @@
-import {getBoardSortingTemplate} from './board-sorting.js';
-import {getEditCardTemplate} from './edit-card.js';
-import {getCardTemplate} from './card.js';
-import {getLoadButtonTemplate} from './load-more-button.js';
+import util from '../util.js';
+import BoardSorting from './board-sorting.js';
+import LoadMoreButton from './load-more-button.js';
 
-const renderTasks = ([firstTask, ...restTasks]) => (
-  `${getEditCardTemplate(firstTask)}
-  ${restTasks.map(getCardTemplate).join(``)}`
-  .trim());
 
-export const getBoardContainerTemplate = (tasks, isButton) => (
-  `<section class="board container">
-    ${getBoardSortingTemplate()}
-    <div class="board__tasks">
-      ${renderTasks(tasks)}
-    </div>
-  ${isButton ? `${getLoadButtonTemplate()}` : ``}
-  </section>`
-  .trim());
+export default class Board {
+  constructor(isButton) {
+    this._element = null;
+    this._isButton = isButton;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = util.createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<section class="board container">
+      ${new BoardSorting().getTemplate()}
+      <div class="board__tasks">
+      </div>
+    ${this._isButton ? `${new LoadMoreButton().getTemplate()}` : ``}
+    </section>`
+    .trim();
+  }
+}

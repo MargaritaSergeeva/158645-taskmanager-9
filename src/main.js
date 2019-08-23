@@ -1,9 +1,12 @@
-import {getMenuTemplate} from './components/site-menu.js';
-import {getSearchTemplate} from './components/search.js';
-import {getFilterTemplate} from './components/filter.js';
-import {getBoardContainerTemplate} from './components/board.js';
-import {getTaskData} from './data.js';
-import {getFilterData} from './data.js';
+import constant from './constant.js';
+import util from './util.js';
+import SiteMenu from './components/site-menu.js';
+import Search from './components/search.js';
+import Filter from './components/filter.js';
+import Board from './components/board.js';
+import Task from './components/task.js';
+import EditTask from './components/edit-task.js';
+import {getTaskData, getFilterData} from './data.js';
 
 const TASK_COUNT = 25;
 const TASKS_IN_PART = 8;
@@ -13,15 +16,52 @@ const controlContainerElement = mainElement.querySelector(`.main__control`);
 const tasks = new Array(TASK_COUNT).fill(``).map(getTaskData);
 let renderedTasks = 0;
 
-const renderComponent = (element, container, place) => container.insertAdjacentHTML(place, element);
-
 const onLoadMoreElementClick = (evt) => {
   evt.preventDefault();
   renderBoardComponent(tasks);
 };
 
+const renderTask = (taskItem, tasksContainer) => {
+  const task = new Task(taskItem);
+  const taskEdit = new EditTask(taskItem);
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  task.getElement()
+    .querySelector(`.card__btn--edit`)
+    .addEventListener(`click`, () => {
+      tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement().querySelector(`textarea`)
+    .addEventListener(`focus`, () => {
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement().querySelector(`textarea`)
+    .addEventListener(`blur`, () => {
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement()
+    .querySelector(`form`)
+    .addEventListener(`submit`, () => {
+      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  util.render(tasksContainer, task.getElement(), constant.Position.BEFOREEND);
+};
+
 const renderBoardComponent = (tasksArr) => {
   const boardElement = mainElement.querySelector(`.board`);
+
 
   const isButton = () => tasksArr.length - renderedTasks > TASKS_IN_PART;
 
@@ -29,10 +69,14 @@ const renderBoardComponent = (tasksArr) => {
     mainElement.removeChild(boardElement);
   }
 
-  renderComponent(getBoardContainerTemplate(tasksArr.slice(0, renderedTasks + TASKS_IN_PART), isButton()), mainElement, `beforeend`);
+  util.render(mainElement, new Board(isButton()).getElement(), constant.Position.BEFOREEND);
+
+  const boardTasksElement = mainElement.querySelector(`.board__tasks`);
+  tasksArr
+  .slice(0, renderedTasks + TASKS_IN_PART)
+  .forEach((taskItem) => renderTask(taskItem, boardTasksElement));
 
   const loadMoreElement = mainElement.querySelector(`.load-more`);
-
   if (loadMoreElement) {
     loadMoreElement.addEventListener(`click`, onLoadMoreElementClick);
   }
@@ -40,7 +84,7 @@ const renderBoardComponent = (tasksArr) => {
   renderedTasks += TASKS_IN_PART;
 };
 
-renderComponent(getMenuTemplate(), controlContainerElement, `beforeend`);
-renderComponent(getSearchTemplate(), mainElement, `beforeend`);
-renderComponent(getFilterTemplate(getFilterData(tasks)), mainElement, `beforeend`);
+util.render(controlContainerElement, new SiteMenu().getElement(), constant.Position.BEFOREEND);
+util.render(mainElement, new Search().getElement(), constant.Position.BEFOREEND);
+util.render(mainElement, new Filter(getFilterData(tasks)).getElement(), constant.Position.BEFOREEND);
 renderBoardComponent(tasks);

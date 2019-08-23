@@ -1,11 +1,26 @@
-export const cardControlButtonMap = {
-  'edit': [`edit`, ``],
-  'archive': [`archive`, ``],
-  'favorites': [`favorites`, `card__btn--disabled`],
-};
+import util from '../util.js';
 
-export const getCardControlButtonTemplate = (array) => (
-  `<button type="button" class="card__btn card__btn--${array[0]} ${array[1]}">
-    ${array[0]}
-  </button>`.trim()
-);
+export default class CardControlButton {
+  constructor(array) {
+    this._element = null;
+    this._array = array;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = util.createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<button type="button" class="card__btn card__btn--${this._array[0]} ${this._array[1]}">
+    ${this._array[0]}
+    </button>`.trim();
+  }
+}
