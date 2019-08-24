@@ -1,3 +1,5 @@
+import util from '../util.js';
+
 const controlMap = {
   'newTask': [`control__new-task`, `+ ADD NEW TASK`, `control__label--new-task`],
   'task': [`control__task`, `TASKS`, ``],
@@ -17,10 +19,28 @@ const getControlRadioTemplate = (array, isChecked = false) => (
     </label>`.trim()
 );
 
-export const getMenuTemplate = () => (
-  `<section class="control__btn-wrap">
-    ${getControlRadioTemplate(controlMap.newTask)}
-    ${getControlRadioTemplate(controlMap.task, true)}
-    ${getControlRadioTemplate(controlMap.statistic)}
-  </section>`.trim()
-);
+export default class SiteMenu {
+  constructor() {
+    this._element = null;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = util.createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<section class="control__btn-wrap">
+      ${getControlRadioTemplate(controlMap.newTask)}
+      ${getControlRadioTemplate(controlMap.task, true)}
+      ${getControlRadioTemplate(controlMap.statistic)}
+    </section>`.trim();
+  }
+}
