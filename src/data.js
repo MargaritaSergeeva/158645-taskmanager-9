@@ -50,35 +50,35 @@ export const getTaskData = () => ({
   isArchive: Boolean(Math.round(Math.random())),
 });
 
-export const getFilterData = (tasks) => ([
+export const getFilterData = (tasks, openedTasks) => ([
   {
     title: `all`,
     get count() {
-      return tasks.length;
+      return openedTasks.length;
     },
   },
   {
     title: `overdue`,
     get count() {
-      return tasks.filter(({dueDate}) => dueDate < Date.now()).length;
+      return openedTasks.filter(({dueDate}) => dueDate < Date.now()).length;
     },
   },
   {
     title: `today`,
     get count() {
-      return tasks.filter(({dueDate}) => (new Date(dueDate)).getDate() === (new Date()).getDate()).length;
+      return openedTasks.filter(({dueDate}) => (new Date(dueDate)).getDate() === (new Date()).getDate()).length;
     },
   },
   {
     title: `favorites`,
     get count() {
-      return tasks.filter(({isFavorite}) => isFavorite).length;
+      return openedTasks.filter(({isFavorite}) => isFavorite).length;
     },
   },
   {
     title: `repeating`,
     get count() {
-      return tasks
+      return openedTasks
         .filter(({repeatingDays}) => {
           return Object.keys(repeatingDays).some((day) => repeatingDays[day]);
         })
@@ -88,7 +88,7 @@ export const getFilterData = (tasks) => ([
   {
     title: `tags`,
     get count() {
-      return tasks.filter(({tags}) => tags.size > 0).length;
+      return openedTasks.filter(({tags}) => tags.size > 0).length;
     },
   },
   {
