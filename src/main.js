@@ -14,11 +14,12 @@ const TASKS_IN_PART = 8;
 const mainElement = document.querySelector(`.main`);
 const controlContainerElement = mainElement.querySelector(`.main__control`);
 const tasks = new Array(TASK_COUNT).fill(``).map(getTaskData);
+const openedTasks = tasks.filter(({isArchive}) => !isArchive);
 let renderedTasks = 0;
 
 const onLoadMoreElementClick = (evt) => {
   evt.preventDefault();
-  renderBoardComponent(tasks);
+  renderBoardComponent(tasks, openedTasks);
 };
 
 const renderTask = (taskItem, tasksContainer) => {
@@ -59,22 +60,26 @@ const renderTask = (taskItem, tasksContainer) => {
   util.render(tasksContainer, task.getElement(), constant.Position.BEFOREEND);
 };
 
-const renderBoardComponent = (tasksArr) => {
+const renderTasks = (tasksArr, container) => {
+  tasksArr
+  .slice(0, renderedTasks + TASKS_IN_PART)
+  .forEach((taskItem) => renderTask(taskItem, container));
+};
+
+const renderBoardComponent = (tasksArr, openedTasksArr) => {
   const boardElement = mainElement.querySelector(`.board`);
-
-
-  const isButton = () => tasksArr.length - renderedTasks > TASKS_IN_PART;
-
   if (boardElement) {
     mainElement.removeChild(boardElement);
   }
 
-  util.render(mainElement, new Board(isButton()).getElement(), constant.Position.BEFOREEND);
+  const isButton = () => tasksArr.length - renderedTasks > TASKS_IN_PART;
+  const isOpenedTasks = () => openedTasksArr.length > 0;
+  util.render(mainElement, new Board(isButton(), isOpenedTasks()).getElement(), constant.Position.BEFOREEND);
 
   const boardTasksElement = mainElement.querySelector(`.board__tasks`);
-  tasksArr
-  .slice(0, renderedTasks + TASKS_IN_PART)
-  .forEach((taskItem) => renderTask(taskItem, boardTasksElement));
+  if (isOpenedTasks) {
+    renderTasks(openedTasksArr, boardTasksElement);
+  }
 
   const loadMoreElement = mainElement.querySelector(`.load-more`);
   if (loadMoreElement) {
@@ -86,5 +91,5 @@ const renderBoardComponent = (tasksArr) => {
 
 util.render(controlContainerElement, new SiteMenu().getElement(), constant.Position.BEFOREEND);
 util.render(mainElement, new Search().getElement(), constant.Position.BEFOREEND);
-util.render(mainElement, new Filter(getFilterData(tasks)).getElement(), constant.Position.BEFOREEND);
-renderBoardComponent(tasks);
+util.render(mainElement, new Filter(getFilterData(tasks, openedTasks)).getElement(), constant.Position.BEFOREEND);
+renderBoardComponent(tasks, openedTasks);
