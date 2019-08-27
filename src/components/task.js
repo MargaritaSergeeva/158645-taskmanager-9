@@ -1,29 +1,17 @@
 
 import constant from '../constant.js';
-import util from '../util.js';
+import AbstractComponent from './abstract-component.js';
 import CardControlButton from './card-control-button.js';
 import CardColorBar from './card-color-bar.js';
 
-export default class Task {
+export default class Task extends AbstractComponent {
   constructor({description, dueDate, tags, color, repeatingDays}) {
+    super();
     this._description = description;
     this._dueDate = new Date(dueDate);
     this._tags = tags;
     this._color = color;
-    this._element = null;
     this._repeatingDays = repeatingDays;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = util.createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {
@@ -31,9 +19,9 @@ export default class Task {
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
-            ${new CardControlButton(constant.cardControlButtonMap.edit).getTemplate()}
-            ${new CardControlButton(constant.cardControlButtonMap.archive).getTemplate()}
-            ${new CardControlButton(constant.cardControlButtonMap.favorites).getTemplate()}
+            ${new CardControlButton(constant.CARD_CONTROL_BUTTON_MAP.edit).getTemplate()}
+            ${new CardControlButton(constant.CARD_CONTROL_BUTTON_MAP.archive).getTemplate()}
+            ${new CardControlButton(constant.CARD_CONTROL_BUTTON_MAP.favorites).getTemplate()}
           </div>
           ${new CardColorBar().getTemplate()}
           <div class="card__textarea-wrap">

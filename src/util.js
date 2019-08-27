@@ -1,6 +1,10 @@
 import constant from './constant.js';
 
 export default {
+  getRandomBoolean() {
+    return Boolean(Math.round(Math.random()));
+  },
+
   createElement(template) {
     const newElement = document.createElement(`div`);
     newElement.innerHTML = template;
