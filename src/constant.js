@@ -4,7 +4,7 @@ export default {
     BEFOREEND: `beforeend`
   },
 
-  cardControlButtonMap: {
+  CARD_CONTROL_BUTTON_MAP: {
     'edit': [`edit`, ``],
     'archive': [`archive`, ``],
     'favorites': [`favorites`, `card__btn--disabled`],

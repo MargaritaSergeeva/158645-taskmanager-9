@@ -1,30 +1,20 @@
 
-import util from '../util.js';
+import AbstractComponent from './abstract-component.js';
 
-const getSortingLinkTemplate = (text) => `<a href="#" class="board__filter">SORT BY ${text}</a>`.trim();
+const SORTING_TYPES = [`default`, `date-up`, `date-down`];
 
-export default class BoardSorting {
-  constructor() {
-    this._element = null;
-  }
+const SORTING_TYPES_MAP = {
+  'default': `DEFAULT`,
+  'date-up': `DATE up`,
+  'date-down': `DATE down`,
+};
 
-  getElement() {
-    if (!this._element) {
-      this._element = util.createElement(this.getTemplate());
-    }
+const getSortingLinkTemplate = (type, text) => `<a href="#" data-sort-type="${type}" class="board__filter">SORT BY ${text}</a>`.trim();
 
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
+export default class BoardSorting extends AbstractComponent {
   getTemplate() {
     return `<div class="board__filter-list">
-      ${getSortingLinkTemplate(`DEFAULT`)}
-      ${getSortingLinkTemplate(`DATE up`)}
-      ${getSortingLinkTemplate(`DATE down`)}
+    ${SORTING_TYPES.map((type) => getSortingLinkTemplate(type, SORTING_TYPES_MAP[type]).trim()).join(``)}
     </div>`.trim();
   }
 }

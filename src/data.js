@@ -1,3 +1,5 @@
+import util from './util.js';
+
 const DESCRIPTION_ARRAY_LENGTH = 3;
 const COLOR_ARRAY_LENGTH = 5;
 const DAYS_COUNT = 7;
@@ -19,11 +21,11 @@ export const getTaskData = () => ({
   ][Math.floor(Math.random() * DESCRIPTION_ARRAY_LENGTH)],
   dueDate: Date.now() + MS + getWeekInMs() - getWeekInMs(),
   repeatingDays: {
-    'Mo': Boolean(Math.round(Math.random())),
+    'Mo': util.getRandomBoolean(),
     'Tu': false,
-    'We': Boolean(Math.round(Math.random())),
+    'We': util.getRandomBoolean(),
     'Th': false,
-    'Fr': Boolean(Math.round(Math.random())),
+    'Fr': util.getRandomBoolean(),
     'Sa': false,
     'Su': false,
   },
@@ -46,8 +48,8 @@ export const getTaskData = () => ({
     `green`,
     `pink`,
   ][Math.floor(Math.random() * COLOR_ARRAY_LENGTH)],
-  isFavorite: Boolean(Math.round(Math.random())),
-  isArchive: Boolean(Math.round(Math.random())),
+  isFavorite: util.getRandomBoolean(),
+  isArchive: util.getRandomBoolean(),
 });
 
 export const getFilterData = (tasks, openedTasks) => ([

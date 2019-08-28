@@ -1,46 +1,30 @@
-import util from '../util.js';
+import AbstractComponent from './abstract-component.js';
 
 const controlMap = {
-  'newTask': [`control__new-task`, `+ ADD NEW TASK`, `control__label--new-task`],
-  'task': [`control__task`, `TASKS`, ``],
-  'statistic': [`control__statistic`, `STATISTICS`, ``],
+  'newTask': [`control__new-task`, `+ ADD NEW TASK`, `control__label--new-task`, false],
+  'task': [`control__task`, `TASKS`, ``, false],
+  'statistic': [`control__statistic`, `STATISTICS`, ``, true],
 };
 
-const getControlRadioTemplate = (array, isChecked = false) => (
+const controlType = [`newTask`, `task`, `statistic`];
+
+const getControlRadioTemplate = (array) => (
   `<input
       type="radio"
       name="control"
       id="${array[0]}"
       class="control__input visually-hidden"
-      ${isChecked ? ` checked` : ``}
+      ${array[3] ? ` checked` : ``}
     />
     <label for="${array[0]}" class="control__label ${array[2]}">
       ${array[1]}
     </label>`.trim()
 );
 
-export default class SiteMenu {
-  constructor() {
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = util.createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
+export default class SiteMenu extends AbstractComponent {
   getTemplate() {
     return `<section class="control__btn-wrap">
-      ${getControlRadioTemplate(controlMap.newTask)}
-      ${getControlRadioTemplate(controlMap.task, true)}
-      ${getControlRadioTemplate(controlMap.statistic)}
+      ${controlType.map((type) => getControlRadioTemplate(controlMap[type]).trim()).join(``)}
     </section>`.trim();
   }
 }

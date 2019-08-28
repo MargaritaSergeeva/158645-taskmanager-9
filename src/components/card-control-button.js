@@ -1,21 +1,9 @@
-import util from '../util.js';
+import AbstractComponent from './abstract-component.js';
 
-export default class CardControlButton {
+export default class CardControlButton extends AbstractComponent {
   constructor(array) {
-    this._element = null;
+    super();
     this._array = array;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = util.createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {
