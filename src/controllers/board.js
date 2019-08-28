@@ -1,5 +1,6 @@
 import constant from '../constant.js';
 import util from '../util.js';
+import keyBoard from '../keyboard.js';
 import Board from '../components/board.js';
 import BoardSorting from '../components/board-sorting.js';
 import TaskList from '../components/task-list.js';
@@ -60,7 +61,7 @@ export class BoardController {
     const taskEdit = new EditTask(taskItem);
 
     const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
+      if (keyBoard.isEscPressed(evt)) {
         this._taskList.getElement().replaceChild(task.getElement(), taskEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
