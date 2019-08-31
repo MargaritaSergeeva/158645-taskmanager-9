@@ -1,8 +1,14 @@
 import constant from './constant.js';
 
+const SINGLE_DIGIT_LIMIT = 10;
+
 export default {
   getRandomBoolean() {
     return Boolean(Math.round(Math.random()));
+  },
+
+  getNumberWithZero(number) {
+    return number < SINGLE_DIGIT_LIMIT ? `0` + number : number;
   },
 
   createElement(template) {
