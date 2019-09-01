@@ -1,18 +1,25 @@
+import moment from 'moment';
+import keyBoard from '../keyboard.js';
 import constant from '../constant.js';
 import AbstractComponent from './abstract-component.js';
-import CardControlButton from './card-control-button.js';
 import CardColorBar from './card-color-bar.js';
+import util from '../util.js';
 
 const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
 export default class EditTask extends AbstractComponent {
-  constructor({description, dueDate, tags, color, repeatingDays}) {
+  constructor(tasks) {
     super();
-    this._description = description;
-    this._dueDate = new Date(dueDate);
-    this._tags = tags;
-    this._color = color;
-    this._repeatingDays = repeatingDays;
+    this._description = tasks.description;
+    this._dueDate = tasks.dueDate;
+    this._tags = tasks.tags;
+    this._color = tasks.color;
+    this._repeatingDays = tasks.repeatingDays;
+    this._isArchive = tasks.isArchive;
+    this._isFavorite = tasks.isFavorite;
+    this._changeColor = this._color;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -20,8 +27,14 @@ export default class EditTask extends AbstractComponent {
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
-            ${new CardControlButton(constant.CARD_CONTROL_BUTTON_MAP.archive).getTemplate()}
-            ${new CardControlButton(constant.CARD_CONTROL_BUTTON_MAP.favorites).getTemplate()}
+            <button type="button" class="card__btn card__btn--archive
+            ${this._isArchive ? `` : ` card__btn--disabled`}">
+              archive
+            </button>
+            <button type="button" class="card__btn card__btn--favorites
+            ${this._isFavorite ? `` : ` card__btn--disabled`}">
+              favorites
+            </button>
           </div>
           ${new CardColorBar().getTemplate()}
           <div class="card__textarea-wrap">
@@ -48,7 +61,8 @@ export default class EditTask extends AbstractComponent {
                       type="text"
                       placeholder="23 September"
                       name="date"
-                      value="${this._dueDate ? `${new Date(this._dueDate).toDateString()}` : ``}"
+                      datetime="${moment(this._dueDate).format()}"
+                      value="${this._dueDate ? `${moment(this._dueDate).format(`DD MMMM HH:mm A`)}` : ``}"
                     />
                   </label>
                 </fieldset>
@@ -121,5 +135,86 @@ export default class EditTask extends AbstractComponent {
         </div>
       </form>
     </article>`.trim();
+  }
+
+  _subscribeOnEvents() {
+    this.getElement().querySelector(`.card__hashtag-input`).addEventListener(`keydown`, (evt) => {
+      if (keyBoard.isEnterPressed(evt)) {
+        evt.preventDefault();
+        this.getElement().querySelector(`.card__hashtag-list`).insertAdjacentHTML(constant.Position.BEFOREEND, `<span class="card__hashtag-inner">
+            <input
+              type="hidden"
+              name="hashtag"
+              value="${evt.target.value}"
+              class="card__hashtag-hidden-input"
+            />
+            <p class="card__hashtag-name">
+              #${evt.target.value}
+            </p>
+            <button type="button" class="card__hashtag-delete">
+              delete
+            </button>
+          </span>`);
+        evt.target.value = ``;
+      }
+    });
+
+    this.getElement().querySelectorAll(`.card__hashtag-delete`).forEach((it) => it.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      util.unrender(evt.target.parentNode);
+    }));
+
+    this.getElement().querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      this.getElement().querySelector(`.card__date`).value = ``;
+      if (this.getElement().querySelector(`.card__date-deadline`).hasAttribute(`disabled`)) {
+        this.getElement().querySelector(`.card__date-deadline`).disabled = false;
+        this.getElement().querySelector(`.card__date-status`).textContent = `yes`;
+      } else {
+        this.getElement().querySelector(`.card__date-deadline`).disabled = true;
+        this.getElement().querySelector(`.card__date-status`).textContent = `no`;
+      }
+    });
+
+    this.getElement().querySelector(`.card__repeat-toggle`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      this.getElement().querySelectorAll(`.card__repeat-day-input`).forEach((it) => {
+        it.checked = false;
+      });
+      if (this.getElement().querySelector(`.card__repeat-days`).hasAttribute(`disabled`)) {
+        this.getElement().querySelector(`.card__repeat-days`).disabled = false;
+        this.getElement().querySelector(`.card__repeat-status`).textContent = `yes`;
+        this.getElement().classList.add(`card--repeat`);
+      } else {
+        this.getElement().querySelector(`.card__repeat-days`).disabled = true;
+        this.getElement().querySelector(`.card__repeat-status`).textContent = `no`;
+        this.getElement().classList.remove(`card--repeat`);
+      }
+    });
+
+    this.getElement().querySelector(`.card__colors-wrap`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+      if (evt.target.classList.contains(`card__color`)) {
+        this.getElement().classList.remove(`card--${this._changeColor}`);
+        this.getElement().classList.add(`card--${evt.target.textContent}`);
+
+        this._changeColor = evt.target.textContent;
+        this.getElement().querySelectorAll(`card__color-input`).forEach((it) => {
+          it.checked = false;
+        });
+        this.getElement().querySelector(`.card__color-input--${this._changeColor}`).checked = true;
+      }
+    });
+
+    this.getElement().querySelector(`.card__btn--archive`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      this.getElement().querySelector(`.card__btn--archive`).classList.toggle(`card__btn--disabled`);
+    });
+
+    this.getElement().querySelector(`.card__btn--favorites`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      this.getElement().querySelector(`.card__btn--favorites`).classList.toggle(`card__btn--disabled`);
+    });
   }
 }
