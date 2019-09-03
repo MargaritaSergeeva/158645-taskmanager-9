@@ -1,4 +1,7 @@
 import cloneDeep from 'lodash/clonedeep';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
 import util from '../util.js';
 import constant from '../constant.js';
 import keyBoard from '../keyboard.js';
@@ -6,16 +9,16 @@ import Task from '../components/task.js';
 import EditTask from '../components/edit-task.js';
 
 export class TaskController {
-  constructor(container, data, onDataChange, onChangeView) {
+  constructor(container, taskData, onDataChange, onChangeView) {
     this._container = container;
-    this._data = data;
+    this._taskData = taskData;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
-    this._taskView = new Task(data);
-    this._taskEdit = new EditTask(data);
-    this._isArchive = this._data.isArchive;
-    this._isFavorite = this._data.isFavorite;
-    this._newData = cloneDeep(this._data);
+    this._taskView = new Task(taskData);
+    this._taskEdit = new EditTask(taskData);
+    this._isArchive = this._taskData.isArchive;
+    this._isFavorite = this._taskData.isFavorite;
+    this._newTaskData = cloneDeep(this._taskData);
 
     this.init();
   }
@@ -27,6 +30,12 @@ export class TaskController {
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
+
+    flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._taskData.dueDate,
+    });
 
     this._taskView.getElement()
       .querySelector(`.card__btn--edit`)
@@ -64,7 +73,7 @@ export class TaskController {
           description: formData.get(`text`),
           color: formData.get(`color`),
           tags: new Set(formData.getAll(`hashtag`)),
-          dueDate: formData.get(`date`) ? new Date(this._taskEdit.getElement().querySelector(`.card__date`).getAttribute(`datetime`)) : ``,
+          dueDate: formData.get(`date`) ? new Date(formData.get(`date`)) : ``,
           repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
             acc[it] = true;
             return acc;
@@ -73,7 +82,7 @@ export class TaskController {
           isArchive: this._isArchive,
         };
 
-        this._onDataChange(entry, this._data);
+        this._onDataChange(entry, this._taskData);
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
@@ -93,25 +102,25 @@ export class TaskController {
   }
 
   _toggleIsArchive() {
-    this._isArchive = this._data.isArchive ? false : true;
+    this._isArchive = this._taskData.isArchive ? false : true;
   }
 
   _toggleIsFavorite() {
-    this._isFavorite = this._data.isFavorite ? false : true;
+    this._isFavorite = this._taskData.isFavorite ? false : true;
   }
 
   _onTaskViewArchiveBtnClick() {
     this._toggleIsArchive();
-    this._newData.isArchive = this._data.isArchive ? false : true;
+    this._newTaskData.isArchive = this._taskData.isArchive ? false : true;
 
-    this._onDataChange(this._newData, this._data);
+    this._onDataChange(this._newTaskData, this._taskData);
   }
 
   _onTaskViewFavoriteBtnClick() {
     this._toggleIsFavorite();
-    this._newData.isFavorite = this._data.isFavorite ? false : true;
+    this._newTaskData.isFavorite = this._taskData.isFavorite ? false : true;
 
-    this._onDataChange(this._newData, this._data);
+    this._onDataChange(this._newTaskData, this._taskData);
   }
 
   _onTaskEditArchiveBtnClick() {

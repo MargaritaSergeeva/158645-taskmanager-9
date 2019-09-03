@@ -33,4 +33,12 @@ export default {
       element.remove();
     }
   },
+
+  isElementDisabled(element) {
+    return element.hasAttribute(`disabled`);
+  },
+
+  isElementContainsClass(element, className) {
+    return element.classList.contains(className);
+  },
 };

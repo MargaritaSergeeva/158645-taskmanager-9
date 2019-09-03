@@ -167,7 +167,8 @@ export default class EditTask extends AbstractComponent {
     this.getElement().querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, (evt) => {
       evt.preventDefault();
       this.getElement().querySelector(`.card__date`).value = ``;
-      if (this.getElement().querySelector(`.card__date-deadline`).hasAttribute(`disabled`)) {
+      const dateDeadlineElement = this.getElement().querySelector(`.card__date-deadline`);
+      if (util.isElementDisabled(dateDeadlineElement)) {
         this.getElement().querySelector(`.card__date-deadline`).disabled = false;
         this.getElement().querySelector(`.card__date-status`).textContent = `yes`;
       } else {
@@ -178,10 +179,12 @@ export default class EditTask extends AbstractComponent {
 
     this.getElement().querySelector(`.card__repeat-toggle`).addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      this.getElement().querySelectorAll(`.card__repeat-day-input`).forEach((it) => {
+      Array.from(this.getElement().querySelectorAll(`.card__repeat-day-input`)).forEach((it) => {
         it.checked = false;
       });
-      if (this.getElement().querySelector(`.card__repeat-days`).hasAttribute(`disabled`)) {
+
+      const repeatDaysElement = this.getElement().querySelector(`.card__repeat-days`);
+      if (util.isElementDisabled(repeatDaysElement)) {
         this.getElement().querySelector(`.card__repeat-days`).disabled = false;
         this.getElement().querySelector(`.card__repeat-status`).textContent = `yes`;
         this.getElement().classList.add(`card--repeat`);
@@ -195,12 +198,12 @@ export default class EditTask extends AbstractComponent {
     this.getElement().querySelector(`.card__colors-wrap`).addEventListener(`click`, (evt) => {
       evt.preventDefault();
 
-      if (evt.target.classList.contains(`card__color`)) {
+      if (util.isElementContainsClass(evt.target, `card__color`)) {
         this.getElement().classList.remove(`card--${this._changeColor}`);
         this.getElement().classList.add(`card--${evt.target.textContent}`);
 
         this._changeColor = evt.target.textContent;
-        this.getElement().querySelectorAll(`card__color-input`).forEach((it) => {
+        Array.from(this.getElement().querySelectorAll(`card__color-input`)).forEach((it) => {
           it.checked = false;
         });
         this.getElement().querySelector(`.card__color-input--${this._changeColor}`).checked = true;
