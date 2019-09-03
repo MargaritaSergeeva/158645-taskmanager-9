@@ -42,7 +42,6 @@ export default class Task extends AbstractComponent {
                 ${this._dueDate ? `` : ` visually-hidden`}">
                   <p class="card__input-deadline-wrap">
                     <span class="card__date">${moment(this._dueDate).format(`DD MMMM`)}</span>
-                    <span class="card__time">${moment(this._dueDate).format(`HH:mm A`)}</span>
                   </p>
                 </div>
               </div>
