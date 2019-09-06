@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash/clonedeep';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
@@ -8,32 +7,51 @@ import keyBoard from '../keyboard.js';
 import Task from '../components/task.js';
 import EditTask from '../components/edit-task.js';
 
+export const Mode = {
+  ADDING: `adding`,
+  DEFAULT: `default`,
+};
+
 export class TaskController {
-  constructor(container, taskData, onDataChange, onChangeView) {
+  constructor(container, taskData, mode, onChangeView, onNewTaskClose, onDataChange) {
     this._container = container;
     this._taskData = taskData;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
+    this._onNewTaskClose = onNewTaskClose;
     this._taskView = new Task(taskData);
     this._taskEdit = new EditTask(taskData);
     this._isArchive = this._taskData.isArchive;
     this._isFavorite = this._taskData.isFavorite;
-    this._newTaskData = cloneDeep(this._taskData);
+    this._newTaskData = this._taskData;
 
-    this.init();
+    this.init(mode);
   }
 
-  init() {
+  init(mode) {
+    let renderPosition = constant.Position.BEFOREEND;
+    let currentView = this._taskView;
+
     const onEscKeyDown = (evt) => {
       if (keyBoard.isEscPressed(evt)) {
-        this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+        if (mode === Mode.ADDING) {
+          this._container.removeChild(currentView.getElement());
+          this._onNewTaskClose();
+        } else {
+          this._container.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+        }
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
 
+    if (mode === Mode.ADDING) {
+      renderPosition = constant.Position.AFTERBEGIN;
+      currentView = this._taskEdit;
+      document.addEventListener(`keydown`, onEscKeyDown);
+    }
+
     flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
       altInput: true,
-      allowInput: true,
       defaultDate: this._taskData.dueDate,
     });
 
@@ -42,7 +60,7 @@ export class TaskController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
         this._onChangeView();
-        this._container.getElement().replaceChild(this._taskEdit.getElement(), this._taskView.getElement());
+        this._container.replaceChild(this._taskEdit.getElement(), this._taskView.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -82,43 +100,49 @@ export class TaskController {
           isArchive: this._isArchive,
         };
 
-        this._onDataChange(entry, this._taskData);
+        this._onDataChange(entry, mode === Mode.DEFAULT ? this._taskData : null);
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
+
+    this._taskEdit.getElement().querySelector(`.card__delete`)
+    .addEventListener(`click`, () => {
+      this._onDataChange(null, this._taskData);
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
 
     this._taskView.getElement().querySelector(`.card__btn--archive`).addEventListener(`click`, () => this._onTaskViewArchiveBtnClick());
     this._taskView.getElement().querySelector(`.card__btn--favorites`).addEventListener(`click`, () => this._onTaskViewFavoriteBtnClick());
     this._taskEdit.getElement().querySelector(`.card__btn--archive`).addEventListener(`click`, () => this._onTaskEditArchiveBtnClick());
     this._taskEdit.getElement().querySelector(`.card__btn--favorites`).addEventListener(`click`, () => this._onTaskEditFavoriteBtnClick());
 
-    util.render(this._container.getElement(), this._taskView.getElement(), constant.Position.BEFOREEND);
+    util.render(this._container, currentView.getElement(), renderPosition);
   }
 
   setDefaultView() {
-    if (this._container.getElement().contains(this._taskEdit.getElement())) {
-      this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+    if (this._container.contains(this._taskEdit.getElement())) {
+      this._container.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
     }
   }
 
   _toggleIsArchive() {
-    this._isArchive = this._taskData.isArchive ? false : true;
+    this._isArchive = !this._taskData.isArchive;
   }
 
   _toggleIsFavorite() {
-    this._isFavorite = this._taskData.isFavorite ? false : true;
+    this._isFavorite = !this._taskData.isFavorite;
   }
 
   _onTaskViewArchiveBtnClick() {
     this._toggleIsArchive();
-    this._newTaskData.isArchive = this._taskData.isArchive ? false : true;
+    this._newTaskData.isArchive = !this._taskData.isArchive;
 
     this._onDataChange(this._newTaskData, this._taskData);
   }
 
   _onTaskViewFavoriteBtnClick() {
     this._toggleIsFavorite();
-    this._newTaskData.isFavorite = this._taskData.isFavorite ? false : true;
+    this._newTaskData.isFavorite = !this._taskData.isFavorite;
 
     this._onDataChange(this._newTaskData, this._taskData);
   }
