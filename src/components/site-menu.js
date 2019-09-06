@@ -2,11 +2,11 @@ import AbstractComponent from './abstract-component.js';
 
 const controlMap = {
   'newTask': [`control__new-task`, `+ ADD NEW TASK`, `control__label--new-task`, false],
-  'task': [`control__task`, `TASKS`, ``, false],
-  'statistic': [`control__statistic`, `STATISTICS`, ``, true],
+  'tasks': [`control__task`, `TASKS`, ``, true],
+  'statistic': [`control__statistic`, `STATISTICS`, ``, false],
 };
 
-const controlType = [`newTask`, `task`, `statistic`];
+const controlType = [`newTask`, `tasks`, `statistic`];
 
 const getControlRadioTemplate = (array) => (
   `<input
